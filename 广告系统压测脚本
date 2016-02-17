@@ -1,0 +1,39 @@
+__author__ = 'wangwenhui'
+import time
+import os
+import subprocess
+import threading
+import  sys,random
+ 
+def get_cmd_line():
+      file=open("./jsonrequest.txt","r")
+      lines=file.readlines()
+      file.close()
+      i=random.randint(0,len(lines)-1)
+      parm=lines[i].strip('\n')
+      cmd_line = "echo \'%s\'|" % (parm)
+      cmd_line += "/home/work/sendpack -p 7767 -i 10.11.0.79"
+  
+      return cmd_line
+ 
+def exec_cmd():
+	while 1:
+         cmd_line=get_cmd_line()
+         p= subprocess.Popen(cmd_line,shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+         message = p.stdout.readlines()
+         retval = p.wait()
+         time.sleep(1)
+         return retval, message
+def main(thread_count):
+     threads = []
+     for i in range(0, thread_count):
+         #for j in range(0,20):
+          cmd_line = get_cmd_line()
+          thread_id = threading.Thread(target=exec_cmd)
+          thread_id.setDaemon(True)
+          print "--------start thread-----"
+          thread_id.start()
+          threads.append(thread_id)
+          time.sleep(1)
+     for thread_id in threads:
+         thread_id.join()
