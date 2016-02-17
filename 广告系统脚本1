@@ -1,0 +1,57 @@
+__author__ = 'wangwenhui'
+
+
+import time
+import os
+import subprocess
+import threading
+import  sys,random
+
+def get_cmd_line():
+    file=open("C:\\Users\\wuyinping\\Desktop\\jsonrequest.txt","r")
+    lines=file.readlines()
+    file.close()
+    i=random.randint(0,len(lines)-1)
+    parm=lines[i]
+    cmd_line = "echo \'%s\'|" % (parm)
+    cmd_line += "/home/work/sendpack -p 9001 -i 10.36.253.146"
+    
+    return cmd_line
+
+def exec_cmd(cmd_line):
+    print "-----------------------------------"
+    p = subprocess.Popen(cmd_line, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    message = p.stdout.readlines()
+    retval = p.wait()
+    #file_handler = open(file_name, "w")
+    #for line in message:
+        #file_handler.write(line.strip())
+    #file_handler.close()
+    return retval, message
+
+def main(thread_count=10, sleep_time=1):
+    threads = []
+    for i in range(0, thread_count):
+        cmd_line = get_cmd_line()
+        thread_id = threading.Thread(target=exec_cmd ,args=(cmd_line))
+        thread_id.setDaemon(True)
+        thread_id.start()
+        threads.append(thread_id)
+        time.sleep(sleep_time)
+
+    for thread_id in threads:
+        thread_id.join()
+
+
+if __name__ == '__main__':
+    print "sent request to search server"
+    thread_count=int(sys.argv[1])
+    sleep_time=int(sys.argv[2])
+    main(thread_count, sleep_time)
+    
+
+
+
+
+
+
