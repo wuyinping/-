@@ -1,0 +1,16 @@
+import os ,sys,random
+file=open("C:\\Users\\wuyinping\\Desktop\\11.txt","r")
+lines=file.readlines()
+file.close()
+file1=open("C:\\Users\\wuyinping\\Desktop\\test.txt","w")
+for line in lines:
+    sm=line[::-1]
+    ss='{"searchid":"1213413251243","req_type":3,"req_key":"13594","cuid":"23C0EBDAEE317D470689C4DE7AC7F5EB|'
+    se='\"}'
+    s=ss+sm.strip('\n')+se
+    cmd= 'echo' +s + '| /home/work/sendpack -p 9001  -i 10.36.253.146'
+    file1.write(cmd)
+
+file1.close()
+
+
